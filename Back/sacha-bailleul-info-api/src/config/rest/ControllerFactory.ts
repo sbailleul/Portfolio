@@ -2,11 +2,8 @@ import Controller from "../../controllers/Controller";
 import {ArticleController} from "../../controllers/ArticleController";
 import {ServiceFactory} from "./ServiceFactory";
 import {RestType} from "./RestType";
-import {ArticleSchema} from "../../models/mongoDB/ArticleSchema";
 import {ClassListStrategy, ConstructorType} from "../reflection/ClassListStrategy";
-import Service from "../../services/Service";
 import {ClassList} from "../reflection/ClassList";
-import {ServiceStrategyFactory} from "./ServiceStrategyFactory";
 
 export class ControllerFactory {
 
