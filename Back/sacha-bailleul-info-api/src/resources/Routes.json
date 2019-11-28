@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {"httpMethod":"get", "url":"/api/post", "controller": "PostController" ,"controllerMethod": "getAll"},
+    {"httpMethod":"get", "url":"/api/post/:params", "controller": "PostController", "controllerMethod": "get"},
+    {"httpMethod":"post", "url":"/api/post", "controller": "PostController", "controllerMethod": "insert"},
+    {"httpMethod":"put", "url":"/api/post/:id", "controller": "PostController", "controllerMethod": "update"},
+    {"httpMethod":"delete", "url":"/api/post/:id", "controller": "PostController", "controllerMethod": "delete"}
+  ]
+}

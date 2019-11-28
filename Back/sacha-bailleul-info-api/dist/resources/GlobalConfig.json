@@ -1,0 +1,4 @@
+{
+    "serverType": "EXPRESS",
+    "dbConnectorType": "MONGODB"
+}
