@@ -17,11 +17,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = __importStar(require("mongoose"));
+const ObjectUtil_1 = require("../../utils/ObjectUtil");
 class MongoDBService {
-    constructor(schemaStrategy) {
-        if (schemaStrategy) {
-            this.model = schemaStrategy.getModel();
+    constructor(data) {
+        if (!ObjectUtil_1.ObjectUtil.isComplete(data)) {
+            throw new Error('No schema strategy to instantiate MongoDBService class');
         }
+        this.model = data.schemaStrategy.getModel();
     }
     delete(id) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,6 +42,28 @@ class MongoDBService {
                     error: false,
                     deleted: true,
                     statusCode: 202,
+                    item
+                };
+            }
+            catch (error) {
+                return {
+                    error: true,
+                    statusCode: 500,
+                    errors: error.errors
+                };
+            }
+        });
+    }
+    getOne(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.model) {
+                return;
+            }
+            try {
+                let item = yield this.model.findById(id);
+                return {
+                    error: false,
+                    statusCode: 200,
                     item
                 };
             }
@@ -75,18 +99,11 @@ class MongoDBService {
                     .find(query)
                     .skip(skip)
                     .limit(limit);
-                // let total = await this.model.count();
                 return {
                     error: false,
                     statusCode: 200,
                     data: items
                 };
-                // return {
-                //     error: false,
-                //     statusCode: 200,
-                //     data: items,
-                //     total
-                // };
             }
             catch (error) {
                 return {

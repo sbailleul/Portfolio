@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const ObjectUtil_1 = require("../../utils/ObjectUtil");
 class ExpressServerStrategy {
     constructor() {
         this.server = express_1.default();
@@ -24,7 +25,14 @@ class ExpressServerStrategy {
             throw err;
         }
     }
-    setRoutes(router) {
+    route(data) {
+        if (!ObjectUtil_1.ObjectUtil.isComplete(data)) {
+            return;
+        }
+        const httpMethod = data.httpMethod.toLowerCase();
+        const func = ObjectUtil_1.ObjectUtil.getObjectValueByKey(this.server, httpMethod);
+        func.call(this.server, data.url, data.callback);
+        console.log(httpMethod);
     }
 }
 exports.ExpressServerStrategy = ExpressServerStrategy;

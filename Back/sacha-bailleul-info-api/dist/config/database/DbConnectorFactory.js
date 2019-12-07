@@ -1,19 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DbConnector_1 = require("./DbConnector");
-const DbConnectorType_1 = require("./DbConnectorType");
 const ResourcesConfig_1 = require("../../resources/ResourcesConfig");
-const MySQLStrategy_1 = require("./MySQLStrategy");
-const MongoDBStrategy_1 = require("./MongoDBStrategy");
+const SequelizeStrategy_1 = require("./SequelizeStrategy");
+const MongooseStrategy_1 = require("./MongooseStrategy");
+const DbConnectorType_1 = require("./DbConnectorType");
 class DbConnectorFactory {
-    static getDbConnector(dbConnectorType) {
+    constructor(dbConnectorType) {
+        this.dbConnectorType = dbConnectorType;
+    }
+    static getInstance(dbConnectorType) {
+        if (!this.instance && dbConnectorType) {
+            this.instance = new DbConnectorFactory(dbConnectorType);
+        }
+        return this.instance;
+    }
+    getDbConnector() {
         if (!this.dbConnector) {
-            switch (dbConnectorType) {
-                case DbConnectorType_1.DbConnectorType.MYSQL:
-                    this.dbConnector = new DbConnector_1.DbConnector(ResourcesConfig_1.ResourcesConfig.MYSQL_CONFIG, new MySQLStrategy_1.MySQLStrategy());
+            switch (this.dbConnectorType) {
+                case DbConnectorType_1.DbConnectorType.SEQUELIZE:
+                    this.dbConnector = new DbConnector_1.DbConnector(ResourcesConfig_1.ResourcesConfig.SEQUELIZE_CONFIG, new SequelizeStrategy_1.SequelizeStrategy());
                     break;
-                case DbConnectorType_1.DbConnectorType.MONGODB:
-                    this.dbConnector = new DbConnector_1.DbConnector(ResourcesConfig_1.ResourcesConfig.MONGODB_CONFIG, new MongoDBStrategy_1.MongoDBStrategy());
+                case DbConnectorType_1.DbConnectorType.MONGOOSE:
+                    this.dbConnector = new DbConnector_1.DbConnector(ResourcesConfig_1.ResourcesConfig.MONGOOSE_CONFIG, new MongooseStrategy_1.MongooseStrategy());
                     break;
             }
         }

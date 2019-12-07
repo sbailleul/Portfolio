@@ -1,17 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Route_1 = require("./Route");
-const ArticleController_1 = require("../../controllers/ArticleController");
+const ControllerFactory_1 = require("../rest/ControllerFactory");
+const RestType_1 = require("../rest/RestType");
+const ObjectUtil_1 = require("../../utils/ObjectUtil");
+const httpMethods = require("http2").constants;
 class Router {
-    constructor() {
-        const articleController = ArticleController_1.ArticleController.getInstance();
-        this.routeArray = [
-            new Route_1.Route("get", "/api/post", articleController.getAll),
-            // new Route("get", "/api/post/:params", articleController.get),
-            new Route_1.Route("post", "/api/post", articleController.insert),
-            new Route_1.Route("put", "/api/post/:id", articleController.update),
-            new Route_1.Route("delete", "/api/post/:id", articleController.delete)
-        ];
+    static setRoutes(server) {
+        Object.keys(RestType_1.RestType).forEach(key => this.setRouteByRestType(server, ObjectUtil_1.ObjectUtil.getObjectValueByKey(RestType_1.RestType, key)));
+    }
+    static setRouteByRestType(server, restType) {
+        let controller;
+        if (!restType || !server || !(controller = ControllerFactory_1.ControllerFactory.getInstance().getController(restType))) {
+            return;
+        }
+        restType = restType.toLowerCase();
+        server.route({ url: '/' + restType, httpMethod: httpMethods.HTTP2_METHOD_GET, callback: controller.getAll });
+        server.route({ url: '/' + restType, httpMethod: httpMethods.HTTP2_METHOD_POST, callback: controller.insert });
+        server.route({ url: '/' + restType + '/:id', httpMethod: httpMethods.HTTP2_METHOD_GET, callback: controller.getOne });
+        server.route({ url: '/' + restType + '/:id', httpMethod: httpMethods.HTTP2_METHOD_PUT, callback: controller.update });
+        server.route({ url: '/' + restType + '/:id', httpMethod: httpMethods.HTTP2_METHOD_DELETE, callback: controller.delete });
     }
 }
 exports.Router = Router;

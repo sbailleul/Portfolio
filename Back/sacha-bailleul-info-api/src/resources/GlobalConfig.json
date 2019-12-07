@@ -1,4 +1,4 @@
 {
     "serverType": "EXPRESS",
-    "dbConnectorType": "MONGODB"
+    "dbConnectorType": "SEQUELIZE"
 }

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ServiceStrategyFactory_1 = require("./ServiceStrategyFactory");
-const ClassList_1 = require("../reflection/ClassList");
 class ServiceFactory {
     constructor(classListStrategy) {
         this.classListStrategy = classListStrategy;
@@ -15,14 +14,21 @@ class ServiceFactory {
     }
     getService(serviceType) {
         let service;
+        if (!serviceType) {
+            return undefined;
+        }
         const serviceName = serviceType + "Service";
-        let serviceClass;
         if (this.serviceArray) {
-            service = this.serviceArray.find(controller => controller.constructor.name === serviceType.constructor.name);
+            service = this.serviceArray.find(service => service.constructor.name === serviceName);
         }
         if (!service) {
-            serviceClass = ClassList_1.ClassList.getInstance().getClass(serviceName);
-            service = new serviceClass({ serviceStrategy: ServiceStrategyFactory_1.ServiceStrategyFactory.getInstance().getServiceStrategy(serviceType) });
+            const serviceClass = this.classListStrategy.getClassConstructor(serviceName);
+            try {
+                service = new serviceClass({ serviceStrategy: ServiceStrategyFactory_1.ServiceStrategyFactory.getInstance().getServiceStrategy(serviceType) });
+            }
+            catch (_a) {
+                throw new Error('Can\'t instantiate service class : ' + serviceName);
+            }
             this.serviceArray.push(service);
         }
         return service;

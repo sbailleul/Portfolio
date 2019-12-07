@@ -1,28 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ResourcesConfig_1 = require("../../resources/ResourcesConfig");
+const ObjectUtil_1 = require("../../utils/ObjectUtil");
 const DbConnectorType_1 = require("../database/DbConnectorType");
-const ClassList_1 = require("../reflection/ClassList");
 class ServiceStrategyFactory {
-    constructor(classListStrategy) {
-        this.classListStrategy = classListStrategy;
+    constructor(data) {
+        this.classListStrategy = data.classListStrategy;
+        this.dbConnectorType = data.dbConnectorType;
     }
-    static getInstance(classListStrategy) {
-        if (!this.instance && classListStrategy) {
-            this.instance = new ServiceStrategyFactory(classListStrategy);
+    static getInstance(data) {
+        if (!this.instance && data && ObjectUtil_1.ObjectUtil.isComplete(data)) {
+            this.instance = new ServiceStrategyFactory(data);
         }
         return this.instance;
     }
     getServiceStrategy(serviceStrategyType) {
-        let serviceStrategyName = serviceStrategyType + "Service";
-        let serviceStrategyClass;
-        if (ResourcesConfig_1.ResourcesConfig.GLOBAL_CONFIG.dbConnectorType === DbConnectorType_1.DbConnectorType.MONGODB) {
-            serviceStrategyName = "MongoDB" + serviceStrategyName;
-            serviceStrategyClass = ClassList_1.ClassList.getInstance().getClass(serviceStrategyName);
-            return new serviceStrategyClass();
+        if (!serviceStrategyType) {
+            return undefined;
         }
-        else {
-            throw new Error();
+        let serviceStrategyName;
+        serviceStrategyName = serviceStrategyType + "Service";
+        if (this.dbConnectorType === DbConnectorType_1.DbConnectorType.MONGOOSE || this.dbConnectorType === DbConnectorType_1.DbConnectorType.SEQUELIZE) {
+            serviceStrategyName = this.dbConnectorType.charAt(0).toUpperCase() + this.dbConnectorType.substr(1).toLowerCase() + serviceStrategyName;
+            const serviceStrategyClass = this.classListStrategy.getClassConstructor(serviceStrategyName);
+            if (serviceStrategyClass) {
+                return new serviceStrategyClass();
+            }
         }
     }
 }

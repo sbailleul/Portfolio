@@ -1,21 +1,6 @@
 "use strict";
-// import express from "express";
-// import bodyParser from "body-parser";
-// const serverConnector = express();
-//
-// serverConnector.use(bodyParser.json());
-//
-// export default serverConnector;
-//
-// export class Server {
-//
-//     private port: number;
-//
-//     constructor(port: number) {
-//         this.port = port;
-//     }
-// }
 Object.defineProperty(exports, "__esModule", { value: true });
+const Router_1 = require("../router/Router");
 class ServerConnector {
     constructor(data, serverStrategy) {
         this._port = data.port;
@@ -26,6 +11,9 @@ class ServerConnector {
     }
     listen() {
         this.serverStrategy.listen(this);
+    }
+    setRoutes() {
+        Router_1.Router.setRoutes(this.serverStrategy);
     }
 }
 exports.ServerConnector = ServerConnector;

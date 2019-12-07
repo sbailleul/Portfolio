@@ -1,21 +1,17 @@
 import {ServerFactory} from "./config/server/ServerFactory";
-import {ServerType} from "./config/server/ServerType";
-import {ClassList} from "./config/reflection/ClassList";
-import {ArticleType} from "./models/ArticleType";
-import {Article} from "./models/Article";
-import {ConstructorType} from "./config/reflection/ClassListStrategy";
-import {ServiceStrategyFactory} from "./config/rest/ServiceStrategyFactory";
+import {FactoryInstantiator} from "./config/reflection/FactoryInstantiator";
+import {DbConnectorFactory} from "./config/database/DbConnectorFactory";
 
 
-const serverConnector = ServerFactory.getServerConnector(ServerType.EXPRESS);
-const test : ConstructorType<Object> = ClassList.getInstance().getClass('Article');
-console.log(test);
+FactoryInstantiator.instantiateFactories();
 
-// type AConstructorTypeOf<T> = new (...args:any[]) => T;
-// const typeOf= Article;
-const obj = new test({id: 2, content: "tess", type: ArticleType.GRADE, layer_order: 3});
-console.log(obj);
+const dbConnector = DbConnectorFactory.getInstance().getDbConnector();
+const serverConnector =  ServerFactory.getInstance().getServerConnector();
 
-// const articleController = ControllerFactory.getController(RestType.ARTICLE);
-serverConnector.listen();
-ServiceStrategyFactory.
+if(dbConnector && serverConnector){
+    serverConnector.setRoutes();
+    dbConnector.connect();
+    serverConnector.listen();
+}
+
+

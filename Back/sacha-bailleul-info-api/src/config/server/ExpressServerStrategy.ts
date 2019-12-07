@@ -2,9 +2,7 @@ import {ServerStrategy} from "./ServerStrategy";
 import express, {Express} from "express";
 import {ServerConnector} from "./ServerConnector";
 import bodyParser from "body-parser";
-import {DbConnector} from "../database/DbConnector";
-import {DbConnectorFactory} from "../database/DbConnectorFactory";
-import {DbConnectorType} from "../database/DbConnectorType";
+import {ObjectUtil} from "../../utils/ObjectUtil";
 
 export class ExpressServerStrategy implements ServerStrategy{
 
@@ -29,9 +27,18 @@ export class ExpressServerStrategy implements ServerStrategy{
         }
     }
 
-    setRoutes(router: Router){
+    route(data: { url: string; httpMethod: string; callback: Function }): void {
 
+        if(!ObjectUtil.isComplete(data)){
+            return
+        }
+
+        const httpMethod = <any>data.httpMethod.toLowerCase() as unknown;
+        const func: Function = ObjectUtil.getObjectValueByKey(this.server, httpMethod);
+        func.call(this.server, data.url, data.callback);
+        console.log(httpMethod);
     }
+
 
 
 

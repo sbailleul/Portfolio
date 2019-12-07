@@ -1,21 +1,5 @@
-// import express from "express";
-// import bodyParser from "body-parser";
-// const serverConnector = express();
-//
-// serverConnector.use(bodyParser.json());
-//
-// export default serverConnector;
-//
-// export class Server {
-//
-//     private port: number;
-//
-//     constructor(port: number) {
-//         this.port = port;
-//     }
-// }
-
 import {ServerStrategy} from "./ServerStrategy";
+import {Router} from "../router/Router";
 
 export class ServerConnector {
 
@@ -35,5 +19,9 @@ export class ServerConnector {
 
     listen(){
         this.serverStrategy.listen(this);
+    }
+
+    setRoutes(){
+        Router.setRoutes(this.serverStrategy);
     }
 }

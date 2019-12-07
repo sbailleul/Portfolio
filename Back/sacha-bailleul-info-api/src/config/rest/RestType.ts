@@ -1,3 +1,3 @@
 export enum RestType{
-    ARTICLE = "Article"
+    ARTICLE = 'Article'
 }

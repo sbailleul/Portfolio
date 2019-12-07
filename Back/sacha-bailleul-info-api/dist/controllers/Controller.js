@@ -9,14 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ObjectUtil_1 = require("../utils/ObjectUtil");
 class Controller {
-    constructor(service) {
-        this.service = service;
+    constructor(data) {
+        if (!ObjectUtil_1.ObjectUtil.isComplete(data)) {
+            throw new Error();
+        }
+        this.service = data.service;
+        this.getOne = this.getOne.bind(this);
         this.getAll = this.getAll.bind(this);
-        // this.get = this.get.bind(this);
         this.insert = this.insert.bind(this);
         this.update = this.update.bind(this);
         this.delete = this.delete.bind(this);
+    }
+    getOne(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            return res.status(200).send(yield this.service.getOne(id));
+        });
     }
     getAll(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,5 +58,4 @@ class Controller {
     }
 }
 exports.Controller = Controller;
-exports.default = Controller;
 //# sourceMappingURL=Controller.js.map

@@ -1,9 +1,9 @@
-import Service from "./Service";
+import {Service} from "./Service";
 import {ServiceStrategy} from "./servicesStrategies/ServiceStrategy";
 
 export class ArticleService extends Service{
 
-    constructor(serviceStrategy: ServiceStrategy) {
-        super(serviceStrategy);
+    constructor(data: {serviceStrategy: ServiceStrategy}) {
+        super(data);
     }
 }

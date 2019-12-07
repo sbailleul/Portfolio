@@ -1,1 +1,1 @@
-{"version":3,"file":"ArticleService.js","sourceRoot":"","sources":["../../src/services/ArticleService.ts"],"names":[],"mappings":";;;;;AAAA,wDAAgC;AAGhC,MAAa,cAAe,SAAQ,iBAAO;IAEvC,YAAY,eAAgC;QACxC,KAAK,CAAC,eAAe,CAAC,CAAC;IAC3B,CAAC;CACJ;AALD,wCAKC"}
+{"version":3,"file":"ArticleService.js","sourceRoot":"","sources":["../../src/services/ArticleService.ts"],"names":[],"mappings":";;AAAA,uCAAkC;AAGlC,MAAa,cAAe,SAAQ,iBAAO;IAEvC,YAAY,IAAwC;QAChD,KAAK,CAAC,IAAI,CAAC,CAAC;IAChB,CAAC;CACJ;AALD,wCAKC"}

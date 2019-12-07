@@ -1,22 +1,36 @@
 import {DbConnector} from "./DbConnector";
-import {DbConnectorType} from "./DbConnectorType";
 import {ResourcesConfig} from "../../resources/ResourcesConfig";
-import {MySQLStrategy} from "./MySQLStrategy";
-import {MongoDBStrategy} from "./MongoDBStrategy";
+import {SequelizeStrategy} from "./SequelizeStrategy";
+import {MongooseStrategy} from "./MongooseStrategy";
+import {DbConnectorType} from "./DbConnectorType";
 
 export class DbConnectorFactory {
 
-    private static dbConnector: DbConnector;
+    private static instance: DbConnectorFactory;
+    private dbConnector: DbConnector | undefined;
+    private dbConnectorType: DbConnectorType;
 
-    public static getDbConnector(dbConnectorType?: DbConnectorType): DbConnector {
+    constructor(dbConnectorType: DbConnectorType) {
+        this.dbConnectorType = dbConnectorType;
+    }
 
-        if (!this.dbConnector){
-            switch (dbConnectorType) {
-                case DbConnectorType.MYSQL:
-                    this.dbConnector = new DbConnector(ResourcesConfig.MYSQL_CONFIG, new MySQLStrategy());
+    public static getInstance(dbConnectorType?: DbConnectorType): DbConnectorFactory{
+
+        if(!this.instance && dbConnectorType){
+            this.instance = new DbConnectorFactory(dbConnectorType);
+        }
+        return this.instance;
+    }
+
+    public getDbConnector(): DbConnector|undefined {
+
+        if(!this.dbConnector){
+            switch (this.dbConnectorType) {
+                case DbConnectorType.SEQUELIZE:
+                    this.dbConnector = new DbConnector(ResourcesConfig.SEQUELIZE_CONFIG, new SequelizeStrategy());
                     break;
-                case DbConnectorType.MONGODB:
-                    this.dbConnector = new DbConnector(ResourcesConfig.MONGODB_CONFIG,new MongoDBStrategy());
+                case DbConnectorType.MONGOOSE:
+                    this.dbConnector = new DbConnector(ResourcesConfig.MONGOOSE_CONFIG,new MongooseStrategy());
                     break;
             }
         }

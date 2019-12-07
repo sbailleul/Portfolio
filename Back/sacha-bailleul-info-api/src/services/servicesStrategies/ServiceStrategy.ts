@@ -1,11 +1,13 @@
-import {SimpleModel} from "../../models/SimpleModel";
 
 export interface ServiceStrategy{
 
-    getAll(query: any): any;
-    insert(data: SimpleModel): any;
+    getAll(query: any): Promise<any>
 
-    update(id: any, data: SimpleModel): any;
+    insert(data: any): Promise<any>
 
-    delete(id: any): any;
+    update(id: any, data: any): Promise<any>
+
+    delete(id: any): Promise<any>
+    getOne(id: any): Promise<any> ;
+
 }

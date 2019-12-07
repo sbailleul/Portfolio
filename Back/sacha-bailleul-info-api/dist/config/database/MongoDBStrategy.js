@@ -8,7 +8,11 @@ class MongoDBStrategy extends DbConnection_1.DbConnection {
     }
     connect(dbConnector) {
         try {
-            this.module.connect(this.createConnectionString(dbConnector), { useNewUrlParser: true, useUnifiedTopology: true });
+            this.module.connect(this.createConnectionString(dbConnector), {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useCreateIndex: true
+            });
         }
         catch (err) {
             throw err;

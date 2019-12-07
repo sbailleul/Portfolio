@@ -1,9 +1,7 @@
-import Controller from "../../controllers/Controller";
-import {ArticleController} from "../../controllers/ArticleController";
+import {Controller} from "../../controllers/Controller";
 import {ServiceFactory} from "./ServiceFactory";
-import {RestType} from "./RestType";
 import {ClassListStrategy, ConstructorType} from "../reflection/ClassListStrategy";
-import {ClassList} from "../reflection/ClassList";
+import {Service} from "../../services/Service";
 
 export class ControllerFactory {
 
@@ -24,20 +22,25 @@ export class ControllerFactory {
         return this.instance;
     }
 
-    public getController(controllerType: RestType){
+    public getController(controllerType: string): Controller | undefined{
+
+        if(!controllerType){
+            return undefined;
+        }
 
         let controller: Controller | undefined;
         const controllerName = controllerType + "Controller";
-        let controllerClass: ConstructorType<Object>;
-
 
         if(this.controllersArray){
             controller = this.controllersArray.find(controller => controller.constructor.name === controllerType.constructor.name);
         }
         if(!controller){
-            controllerClass = ClassList.getInstance().getClass(controllerName);
-            controller =  <Controller> new controllerClass({serviceStrategy: ServiceFactory.getInstance().getService(controllerType)});
-            this.controllersArray.push(controller);
+            const controllerClass : ConstructorType<Object> = this.classListStrategy.getClassConstructor(controllerName);
+            const service: Service | undefined =  ServiceFactory.getInstance().getService(controllerType);
+            if(service){
+                controller =  <Controller> new controllerClass({service: service});
+                this.controllersArray.push(controller);
+            }
         }
         return controller;
     }

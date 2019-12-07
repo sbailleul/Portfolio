@@ -1,11 +1,11 @@
-import MySQLConfig from "./MySQL.json";
-import MongoDBConfig from "./MongoDB.json";
+import SequelizeConfig from "./Sequelize.json";
+import MongooseConfig from "./Mongoose.json";
 import ExpressConfig from "./Express.json";
 import GlobalConfig from "./GlobalConfig.json";
 
 export class ResourcesConfig{
-    public static MYSQL_CONFIG = MySQLConfig;
-    public static MONGODB_CONFIG = MongoDBConfig;
+    public static SEQUELIZE_CONFIG = SequelizeConfig;
+    public static MONGOOSE_CONFIG = MongooseConfig;
     public static EXPRESS_CONFIG = ExpressConfig;
     public static GLOBAL_CONFIG = GlobalConfig;
 }

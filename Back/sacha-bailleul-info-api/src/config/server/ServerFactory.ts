@@ -4,19 +4,33 @@ import {ServerType} from "./ServerType";
 import {ExpressServerStrategy} from "./ExpressServerStrategy";
 import {ResourcesConfig} from "../../resources/ResourcesConfig";
 
+
 export class ServerFactory {
 
-    private static server: ServerConnector;
+    private static instance: ServerFactory;
+    private server: ServerConnector | undefined;
+    private serverType: ServerType;
 
-    public static getServerConnector(serverType?: ServerType): ServerConnector {
+    constructor(serverType: ServerType) {
+        this.serverType = serverType;
+    }
 
-        if (!this.server){
-            switch (serverType) {
-                case ServerType.EXPRESS:
-                    this.server = new ServerConnector(ResourcesConfig.EXPRESS_CONFIG, new ExpressServerStrategy());
-                    break;
-            }
+    public static getInstance(serverType?: ServerType): ServerFactory{
+
+        if(!this.instance && serverType){
+            this.instance = new ServerFactory(serverType);
         }
+        return this.instance;
+    }
+
+    public  getServerConnector(): ServerConnector {
+
+        switch (this.serverType) {
+            case ServerType.EXPRESS:
+                this.server = new ServerConnector(ResourcesConfig.EXPRESS_CONFIG, new ExpressServerStrategy());
+                break;
+        }
+
         return this.server;
     }
 }

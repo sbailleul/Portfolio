@@ -1,11 +1,6 @@
-import Service from "../../services/Service";
-import {ResourcesConfig} from "../../resources/ResourcesConfig";
+import {Service} from "../../services/Service";
 import {ServiceStrategyFactory} from "./ServiceStrategyFactory";
-import {SchemaStrategy} from "../../models/mongoDB/SchemaStrategy";
-import {RestType} from "./RestType";
-import {ClassList} from "../reflection/ClassList";
 import {ClassListStrategy, ConstructorType} from "../reflection/ClassListStrategy";
-import {ServiceStrategy} from "../../services/servicesStrategies/ServiceStrategy";
 
 export class ServiceFactory{
 
@@ -26,19 +21,25 @@ export class ServiceFactory{
     }
 
 
-    public  getService(serviceType: RestType): Service | undefined{
+    public  getService(serviceType: string): Service | undefined{
 
         let service: Service | undefined;
-        const serviceName = serviceType + "Service";
-        let serviceClass: ConstructorType<Object>;
+        if(!serviceType){
+            return undefined;
+        }
+        const serviceName = serviceType +  "Service";
 
         if(this.serviceArray){
-            service = this.serviceArray.find(controller => controller.constructor.name === serviceType.constructor.name);
+            service = this.serviceArray.find(service => service.constructor.name === serviceName);
         }
 
         if(!service){
-            serviceClass = ClassList.getInstance().getClass(serviceName);
-            service =  <Service> new serviceClass({serviceStrategy: ServiceStrategyFactory.getInstance().getServiceStrategy(serviceType)});
+            const serviceClass: ConstructorType<Object> = this.classListStrategy.getClassConstructor(serviceName);
+            try{
+                service =  <Service> new serviceClass({serviceStrategy: ServiceStrategyFactory.getInstance().getServiceStrategy(serviceType)});
+            } catch{
+                throw new Error('Can\'t instantiate service class : ' + serviceName);
+            }
             this.serviceArray.push(service);
         }
         return service;

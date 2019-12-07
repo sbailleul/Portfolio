@@ -1,37 +1,39 @@
-import {ResourcesConfig} from "../../resources/ResourcesConfig";
-import {DbConnectorType} from "../database/DbConnectorType";
 import {ServiceStrategy} from "../../services/servicesStrategies/ServiceStrategy";
-import {RestType} from "./RestType";
 import {ClassListStrategy, ConstructorType} from "../reflection/ClassListStrategy";
-import {ClassList} from "../reflection/ClassList";
+import {ObjectUtil} from "../../utils/ObjectUtil";
+import {DbConnectorType} from "../database/DbConnectorType";
 
 export class ServiceStrategyFactory{
 
     private static instance: ServiceStrategyFactory;
+    private dbConnectorType: DbConnectorType;
     private classListStrategy: ClassListStrategy;
 
-    constructor(classListStrategy: ClassListStrategy) {
-        this.classListStrategy = classListStrategy;
+    constructor(data: {classListStrategy: ClassListStrategy, dbConnectorType: DbConnectorType}) {
+        this.classListStrategy = data.classListStrategy;
+        this.dbConnectorType = data.dbConnectorType;
     }
 
-    public static getInstance(classListStrategy?: ClassListStrategy): ServiceStrategyFactory {
-        if(!this.instance && classListStrategy){
-           this.instance = new ServiceStrategyFactory(classListStrategy)
+    public static getInstance(data?: {classListStrategy: ClassListStrategy, dbConnectorType: DbConnectorType}): ServiceStrategyFactory {
+        if(!this.instance && data && ObjectUtil.isComplete(data)){
+           this.instance = new ServiceStrategyFactory(data)
         }
         return this.instance;
     }
 
-    public getServiceStrategy(serviceStrategyType: RestType): ServiceStrategy | undefined{
-        let serviceStrategyName = serviceStrategyType + "Service";
-        let serviceStrategyClass : ConstructorType<Object>;
+    public getServiceStrategy(serviceStrategyType: string): ServiceStrategy | undefined{
+        if(!serviceStrategyType){
+            return undefined;
+        }
+        let serviceStrategyName : string;
+        serviceStrategyName = serviceStrategyType +  "Service";
 
-        if(ResourcesConfig.GLOBAL_CONFIG.dbConnectorType === DbConnectorType.MONGODB ){
-            serviceStrategyName = "MongoDB" + serviceStrategyName;
-            serviceStrategyClass = ClassList.getInstance().getClass(serviceStrategyName);
-            return <ServiceStrategy> new serviceStrategyClass();
-
-        } else {
-            throw new Error();
+        if(this.dbConnectorType === DbConnectorType.MONGOOSE || this.dbConnectorType === DbConnectorType.SEQUELIZE){
+            serviceStrategyName = this.dbConnectorType.charAt(0).toUpperCase() + this.dbConnectorType.substr(1).toLowerCase()+ serviceStrategyName;
+            const serviceStrategyClass: ConstructorType<Object> = this.classListStrategy.getClassConstructor(serviceStrategyName);
+            if(serviceStrategyClass){
+                return <ServiceStrategy> new serviceStrategyClass();
+            }
         }
     }
 }
